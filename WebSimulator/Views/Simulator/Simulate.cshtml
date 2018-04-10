@@ -1,0 +1,141 @@
+﻿@using SimulatorDataModel
+@model Championship
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Current: @(Model != null ? Model.Caption : "")</h1>
+</div>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="panel-title h3">Matches</div>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <tr>
+                        <th></th>
+                        <th>Teams</th>
+                        <th>Result</th>
+                        <th></th>
+                    </tr>
+                    @for (int i = 0; i < Model.Competitions.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Html.Hidden("Competitions[" + @i + "].Id", Model.Competitions[i].Id)
+                            </td>
+                            <td>
+                                @Model.Competitions[i].FirstTeam.Code - @Model.Competitions[i].SecondTeam.Code
+                            </td>
+                            <td>
+                                @if (Model.Competitions[i].FirstTeamScore.HasValue)
+                                {
+                                    @:@Model.Competitions[i].FirstTeamScore : @Model.Competitions[i].SecondTeamScore
+                                 }
+                                else
+                                {
+                                    @:*:*
+                                }
+                            </td>
+                            <td>
+                                @if (!Model.Competitions[i].FirstTeamScore.HasValue)
+                                {
+                                    <button type="button" class="btn btn-info btn-sm pull-right">
+                                        @Html.ActionLink("Play", "PlayMatch", "Simulator", new { CompitionId = Model.Competitions[i].Id }, null)
+                                    </button>
+                                }
+                            </td>
+
+                        </tr>
+                    }
+
+                </table>
+            </div>
+            <div class="panel-footer" style="height:3.5em">
+                @(Model.Completed ? "Championship completed" : "Not all matches played")
+                @if (Model?.Completed ?? true)
+                {
+                    using (Html.BeginForm("CreateCampionship", "Simulator", FormMethod.Post, new { @class = "pull-right" }))
+                    {
+                        <button type="submit" class="btn btn-success btn-sm pull-right">New game</button>
+                    }
+                }
+                else
+                {
+                    <button type="button" class="btn btn-info btn-sm pull-right">
+                        @Html.ActionLink("Play All", "PlayAllMatch", "Simulator")
+                    </button>
+
+                }
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="panel-title h3">Team positions</div>
+            </div>
+            <div class="panel-body">
+                @{
+    var summary = ViewBag?.Summary as TeamResult[];
+    var leader = summary.FirstOrDefault();
+    if (summary != null)
+    {
+                <table class="table">
+                    <tr>
+                        <th></th>
+                        <th>Team</th>
+                        <th>Won</th>
+                        <th>Draw</th>
+                        <th>Lost</th>
+                        <th>Score</th>
+                        <th>Points</th>
+                    </tr>
+                    @foreach (var pos in summary)
+                    {
+                        <tr>
+                            <td>
+                                @pos.Placement
+                            </td>
+                            <td>
+                                @pos.Team.Code
+                            </td>
+                            <td>
+                                @pos.Won
+                            </td>
+                            <td>
+                                @pos.Draw
+                            </td>
+                            <td>
+                                @pos.Lost
+                            </td>
+                            <td>
+                                @pos.Scored:@pos.Conceded
+                            </td>
+                            <td>
+                                @pos.Points
+                            </td>
+                        </tr>
+                    }
+                </table>
+                    }
+                    else
+                    {
+                        @:No available results
+                    }
+                }
+            </div>
+            <div class="panel-footer">
+                Leading: @(leader?.Team.Name ?? "not available")
+            </div>
+        </div>
+    </div>
+</div>
+
+

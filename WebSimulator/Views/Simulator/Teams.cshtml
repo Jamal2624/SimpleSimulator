@@ -1,0 +1,77 @@
+﻿@using SimulatorDataModel
+@model List<FootballTeam>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Teams</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-10">
+        @using (Html.BeginForm("SaveTeams", "Simulator", FormMethod.Post))
+        {
+            @*<div class="has-error">
+                    @Html.ValidationSummary(false, "", new { @class = "text-danager" })
+                </div>*@
+            if(ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+            {
+                <div class="alert alert-danger" role="alert">
+                    <a class="close" data-dismiss="alert">×</a>
+                    @foreach (var modelError in Html.ViewData.ModelState.SelectMany(keyValuePair => keyValuePair.Value.Errors))
+                    {
+                        <p>@modelError.ErrorMessage</p>
+                    }
+                </div>
+        }
+        @Html.AntiForgeryToken()
+            <table class="table">
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Collaborating</th>
+                    <th>Attack</th>
+                    <th>Defence</th>
+                </tr>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.TextBox("Teams[" + @i + "].Id", Model[i].Id, new { @readonly = "readonly" })
+                        </td>
+                        <td>
+                            @Html.TextBox("Teams[" + @i + "].Name", Model[i].Name)
+                            @Html.ValidationMessageFor(model => model[i].Name)
+                     </td>
+                        <td>
+                            @Html.TextBox("Teams[" + @i + "].Code", Model[i].Code)
+                            @Html.ValidationMessageFor(model => model[i].Name)
+                       </td>
+                        <td>
+                            @Html.TextBox("Teams[" + @i + "].CollaboratingStrength", Model[i].CollaboratingStrength, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model[i].CollaboratingStrength)
+                        </td>
+
+                        <td>
+                            @Html.TextBox("Teams[" + @i + "].AttackStrength", Model[i].AttackStrength, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model[i].AttackStrength)
+                        </td>
+                        <td class="controls">
+                            @Html.TextBox("Teams[" + @i + "].DefenceStrength", Model[i].DefenceStrength, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model[i].DefenceStrength)
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="4">
+                        <input type="submit" value="Submit" />
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+
+</div>
