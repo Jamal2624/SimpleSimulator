@@ -11,6 +11,7 @@ namespace SimpleSimulatorAccess
         {
             get
             {
+
                 return this.Database.Connection.State==ConnectionState.Open;
             }
         }
